@@ -58,4 +58,31 @@ export class App {
         }
         throw new Error('Rent not found')
     }
+
+    listUsers(): void {
+        console.log('Users:\n')
+        for (const rUser of this.users) {
+            console.log(rUser.name)
+            console.log('\n')
+        }
+        return
+    }
+
+    listBike(): void {
+        console.log('Bikes:\n')
+        for (const rBike of this.bikes) {
+            console.log(rBike.name)
+            console.log('\n')
+        }
+        return
+    }
+
+    listRent(): void {
+        console.log("Rents:\n")
+        for (const rRent of this.rents) {
+            console.log(rRent.user + ', ' + rRent.bike + ', ' + rRent.dateFrom + ', ' + rRent.dateTo + '.')
+            console.log('\n')
+        }
+        return
+    }
 }
