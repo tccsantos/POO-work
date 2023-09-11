@@ -85,4 +85,17 @@ export class App {
         }
         return
     }
+
+    auth(email: string, password: string): void {
+        for (const rUser of this.users) {
+            if (rUser.email === email){
+                if (rUser.password === password){
+                    console.log('Authenticated')
+                    return
+                }
+                else throw new Error('Wrong password')
+            }
+        }
+        throw new Error('User not found')
+    }
 }
