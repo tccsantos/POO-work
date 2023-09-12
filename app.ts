@@ -55,7 +55,7 @@ export class App {
     returnBike(endDate: Date, bike: Bike): number {
         const daily = 10
         const mili = (1000 * 60 * 60 * 24)
-        const days = (bike.rent.getTime() * mili) - (endDate.getTime() * mili)
+        const days = (bike.rent.getTime() / mili) - (endDate.getTime() / mili)
         bike.disp = true
         return (days + 1)*daily
     }
