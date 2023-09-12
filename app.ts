@@ -43,20 +43,21 @@ export class App {
         throw new Error('User not found')
     }
 
-    rentBike(bike: Bike, user: User, startDate: Date, endDate: Date): void {
-        const rent = Rent.create(this.rents, bike, user, startDate, endDate)
-        if (rent) this.rents.push(rent)
-        else console.log(rent)
+    rentBike(bike: Bike, startDate: Date): void {
+        if (bike.disp == true){
+            bike.disp = false
+            bike.rent = startDate
+            return 
+        }
+        else throw new Error('Bike indisponible')
     }
 
-    returnBike(aDate: Date, endDate: Date, bike: Bike) {
-        for (const rent of this.rents) {
-            if(rent.bike === bike && rent.dateTo === endDate){
-                rent.dateReturned = aDate
-                return
-            }
-        }
-        throw new Error('Rent not found')
+    returnBike(endDate: Date, bike: Bike): number {
+        const daily = 10
+        const mili = (1000 * 60 * 60 * 24)
+        const days = (bike.rent.getTime() * mili) - (endDate.getTime() * mili)
+        bike.disp = true
+        return (days + 1)*daily
     }
 
     listUsers(): void {
