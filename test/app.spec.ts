@@ -7,6 +7,7 @@ import { BikeNotFoundError } from "../src/errors/bike-not-found-error"
 import { UnavailableBikeError } from "../src/errors/unavailable-bike-error"
 import { UserNotFoundError } from "../src/errors/user-not-found-error"
 import { DuplicateUserError } from "../src/errors/duplicate-user-error"
+import { RentNotFoundError } from "../src/errors/Rent-Not-Found-error";
 import { FakeUserRepo } from "./doubles/fake-user-repo"
 import { FakeBikeRepo } from "./doubles/fake-bike-repo"
 import { FakeRentRepo } from "./doubles/fake-rent-repo"
@@ -56,6 +57,19 @@ describe('App', () => {
         const app = new App(userRepo, bikeRepo, rentRepo)
         const newYork = new Location(40.753056, -73.983056)
         await expect(app.moveBikeTo('fake-id', newYork)).rejects.toThrow(BikeNotFoundError)
+    })
+
+    it('should throw unavailable bike when trying to rent with an unavailable bike', async () => {
+        const app = new App()
+        const user = new User('Jose', 'jose@mail.com', '1234')
+        await app.registerUser(user)
+        const bike = new Bike('caloi mountainbike', 'mountain bike',
+            1234, 1234, 100.0, 'My bike', 5, [])
+        app.registerBike(bike)
+        app.returnBike(bike.id, user.email)
+        expect(() => {
+            app.returnBike(bike.id, user.email)
+        }).toThrow(RentNotFoundError)
     })
 
     // it('should correctly handle a bike rent', async () => {
