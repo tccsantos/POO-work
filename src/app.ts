@@ -8,6 +8,7 @@ import { UnavailableBikeError } from "./errors/unavailable-bike-error";
 import { UserNotFoundError } from "./errors/user-not-found-error";
 import { DuplicateUserError } from "./errors/duplicate-user-error";
 import { RentNotFoundError } from "./errors/Rent-Not-Found-error";
+import { UserStillHaveRent } from "./errors/User-Still-Have-Rent";
 import { RentRepo } from "./ports/rent-repo";
 import { UserRepo } from "./ports/user-repo";
 import { BikeRepo } from "./ports/bike-repo";
@@ -47,6 +48,7 @@ export class App {
 
     async removeUser(email: string): Promise<void> {
         await this.findUser(email)
+        if (!this.rentRepo.findOpenRentsFor) throw new UserStillHaveRent()
         await this.userRepo.remove(email)
     }
     
