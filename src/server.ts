@@ -2,6 +2,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import { Request, Response, NextFunction } from 'express'
 import { App } from './app'
+import { DuplicateBikeError } from './errors/duplicate-bike-error'
 import { PrismaUserRepo } from './external/database/prisma-user-repo'
 import { PrismaBikeRepo } from './external/database/prisma-bike-repo'
 import { PrismaRentRepo } from './external/database/prisma-rent-repo'
@@ -29,6 +30,24 @@ const app = new App(
     new PrismaBikeRepo(),
     new PrismaRentRepo()
 )
+
+server.post('/api/bikes', async (req, res) => {
+    try {
+        const id = await app.registerBike(req.body)
+        res.status(201).json({ id })
+    } catch (e) {
+        if (e instanceof DuplicateBikeError) {
+            res.status(400).json({
+                message: 'Could not register bike.'
+            })
+            return
+        }
+        res.status(500).json({
+            message: 'Internal server error.'
+        })        
+    }
+})
+
 
 server.post('/api/users', async (req, res) => {
     try {

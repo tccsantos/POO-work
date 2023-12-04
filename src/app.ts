@@ -7,6 +7,7 @@ import { BikeNotFoundError } from "./errors/bike-not-found-error";
 import { UnavailableBikeError } from "./errors/unavailable-bike-error";
 import { UserNotFoundError } from "./errors/user-not-found-error";
 import { DuplicateUserError } from "./errors/duplicate-user-error";
+import { DuplicateBikeError } from "./errors/duplicate-bike-error";
 import { RentRepo } from "./ports/rent-repo";
 import { UserRepo } from "./ports/user-repo";
 import { BikeRepo } from "./ports/bike-repo";
@@ -42,6 +43,9 @@ export class App {
     }
 
     async registerBike(bike: Bike): Promise<string> {
+        if (await this.bikeRepo.find(bike.id)) {
+            throw new DuplicateBikeError()
+        }
         return await this.bikeRepo.add(bike)
     }
 
