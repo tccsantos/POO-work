@@ -1,8 +1,8 @@
-import { PrismaBikeRepo } from "../../../src/external/database/prisma-bike-repo"
 import { Bike } from "../../../src/bike"
 import prisma from "../../../src/external/database/db"
+import { PrismaBikeRepo } from "../../../src/external/database/prisma-bike-repo"
 
-describe('PrismaUserRepo', () => {
+describe('PrismaBikeRepo', () => {
     beforeEach(async () => {
         await prisma.bike.deleteMany({})
     })
@@ -11,69 +11,107 @@ describe('PrismaUserRepo', () => {
         await prisma.bike.deleteMany({})
     })
 
-    it('adds a user in the database', async () => {
-        const userToBePersisted = new Bike(
-            'test bike',
-            'dirt',
-            12,
-            2,
-            5,
-            'test description',
-            5,
-            ['aaa']
+    it('adds a bike in the database', async () => {
+        const bikeToBePersisted = new Bike(
+          'mountain bike',
+          'mountain',
+          20,
+          100,
+          10,
+          'mountain bike',
+          5,
+          ['http://image1.com', 'http://image2.com'],
         )
         const repo = new PrismaBikeRepo()
-        const userId = await repo.add(userToBePersisted)
-        expect(userId).toBeDefined()
-        const persistedUser = await repo.find(userToBePersisted.name)
-        expect(persistedUser.name).toEqual(
-            userToBePersisted.name
+        const bikeId = await repo.add(bikeToBePersisted)
+        expect(bikeId).toBeDefined()
+        const persistedBike = await repo.find(bikeId)
+        expect(persistedBike.name).toEqual(
+          bikeToBePersisted.name
         )
+        expect(persistedBike.imageUrls.length).toEqual(2)
     })
 
-    it('removes a user from the database', async () => {
-        const userToBePersisted = new Bike(
-            'test bike',
-            'dirt',
-            12,
-            2,
-            5,
-            'test description',
-            5,
-            ['aaa']
+    it('removes a bike from the database', async () => {
+        const bikeToBePersisted = new Bike(
+          'mountain bike',
+          'mountain',
+          20,
+          100,
+          10,
+          'mountain bike',
+          5,
+          ['http://image1.com', 'http://image2.com'],
         )
         const repo = new PrismaBikeRepo()
-        await repo.add(userToBePersisted)
-        await repo.remove('test bike')
-        const removedUser = await repo.find('test bike')
-        expect(removedUser).toBeNull()
+        const bikeId = await repo.add(bikeToBePersisted)
+        await repo.remove(bikeId)
+        const removedBike = await repo.find(bikeId)
+        expect(removedBike).toBeNull()
     })
 
-    it('lists users in the database', async () => {
-        const user1 = new Bike(
-            'test bike',
-            'dirt',
-            12,
-            2,
-            5,
-            'test description',
-            5,
-            ['aaa']
+    it('lists bikes in the database', async () => {
+        const bike1 = new Bike(
+          'mountain bike',
+          'mountain',
+          20,
+          100,
+          10,
+          'mountain bike',
+          5,
+          ['http://image1.com', 'http://image2.com'],
         )
-        const user2 = new Bike(
-            'test bike2',
-            'dirt',
-            12,
-            2,
-            5,
-            'test description',
-            5,
-            ['aaa']
+        const bike2 = new Bike(
+          'mountain bike',
+          'mountain',
+          20,
+          100,
+          10,
+          'mountain bike',
+          5,
+          ['http://image1.com', 'http://image2.com'],
         )
         const repo = new PrismaBikeRepo()
-        await repo.add(user1)
-        await repo.add(user2)
-        const userList = await repo.list()
-        expect(userList.length).toEqual(2)
+        await repo.add(bike1)
+        await repo.add(bike2)
+        const bikeList = await repo.list()
+        expect(bikeList.length).toEqual(2)
+    })
+
+    it('should update bike availability in the database', async () => {
+        const bikeToBePersisted = new Bike(
+          'mountain bike',
+          'mountain',
+          20,
+          100,
+          10,
+          'mountain bike',
+          5,
+          ['http://image1.com', 'http://image2.com'],
+        )
+        const repo = new PrismaBikeRepo()
+        const bikeId = await repo.add(bikeToBePersisted)
+        await repo.updateAvailability(bikeId, false)
+        const updatedBike = await repo.find(bikeId)
+        expect(updatedBike.available).toBeFalsy()
+    })
+
+    it('should update bike location in the database', async () => {
+        const bikeToBePersisted = new Bike(
+          'mountain bike',
+          'mountain',
+          20,
+          100,
+          10,
+          'mountain bike',
+          5,
+          ['http://image1.com', 'http://image2.com'],
+        )
+        const repo = new PrismaBikeRepo()
+        const bikeId = await repo.add(bikeToBePersisted)
+        await repo.updateLocation(bikeId, 10.5, 20.5)
+        const updatedBike = await repo.find(bikeId)
+        expect(updatedBike.location.latitude).toEqual(10.5)
+        expect(updatedBike.location.longitude).toEqual(20.5)
     })
 })

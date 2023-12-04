@@ -26,16 +26,8 @@ export class FakeBikeRepo implements BikeRepo {
         return this.bikes
     }
 
-    async updateAvailability(id: string, available: boolean): Promise<void> {
+    async update(id: string, bike: Bike): Promise<void> {
         const bikeIndex = this.bikes.findIndex(bike => bike.id === id)
-        if (bikeIndex !== -1) this.bikes[bikeIndex].available = available
-    }
-
-    async updateLocation(id: string, latitude: number, longitude: number): Promise<void> {
-        const bikeIndex = this.bikes.findIndex(bike => bike.id === id)
-        if (bikeIndex !== -1) {
-            this.bikes[bikeIndex].location.latitude = latitude
-            this.bikes[bikeIndex].location.longitude = longitude
-        }
+        if (bikeIndex !== -1) this.bikes[bikeIndex] = bike
     }
 }
